@@ -9,19 +9,69 @@
    	  	
    	//################################**Le corps des fonctions **############################  	
 
-int mark_line(int mat[][max],int j,int lg[max],int size)
+int tache_affect(int a[][max],int cost[][max],int size)
+{
+	int i,j,costm;
+	costm=0;
+	for(i=0;i<size;i++)
+            {
+                for(j=0;j<size;j++)
+                {
+                    if(a[i][j]== -1)
+                    {
+                          printf("\n La tache %d est affecte a l'agent %d ",i,j);
+                          printf("\n");
+                          costm=costm+cost[i][j];
+                    }
+                }
+            }
+            return costm;
+}
+
+int mark_col(int mat[][max],int j,int lg[max],int size)
 {
 	int i,ln[max];
 	
-             
-    		
+	for(i=0;i<size;i++)
+               {	
+              	 if(mat[i][j]==-2 && lg[i]==-11)
+				   {
+				   	ln[j]=-11;
+				   	printf("\n La colomne %d est marquee ",j);
+				   	
+					}	
+			   }
+			   
     return 	ln[j];	
 }
+
+int mark_line(int mat[][max],int i,int ln[max],int lg[max],int size)
+{
+	int j;
+	
+			for(j=0;j<size;j++)
+               {	
+              	 if(mat[i][j]==-1 && ln[j]==-11)
+				   {
+				   	lg[i]=-11;
+				   	printf("\n La ligne %d est marquee ",i);
+					}	
+			   }	
+				   
+    return 	lg[i];	
+}
+
+
+
+
+
+
 
 
 int zero_encadre(int mat[][max],int size)
 {
 	int i,j,l;
+	l=0;
 	for(i=0;i<size;i++)
         {
             for(j=0;j<size;j++)
@@ -37,11 +87,27 @@ int zero_encadre(int mat[][max],int size)
 
 
 
-void mark_zero_line(int mat[][max],int lz[max],int k,int size)
+int mark_zero_line(int mat[][max],int repon3,int k,int size)
 {
-	int i,j,co;
+	
+	int i,j,co,lz[max],lzz[max],lzzz;
+	lzzz=0;
+	for(i=0;i<size;i++)
+        			{
+        				lz[i]=0;
+        				lzz[i]=0;
+         			for(j=0;j<size;j++)
+    				{
+     				if(mat[i][j]==0)
+      				{
+       				lz[i]=lz[i]+1;
+					lzz[i]=lz[i];                
+      				}			  
+     				}   
+        			}
+			     
 	if(lz[k]==1)
-			   {
+	  {
 			 	for(j=0;j<size;j++)
 			 	 {
 			    	if (mat[k][j]==0)
@@ -58,14 +124,41 @@ void mark_zero_line(int mat[][max],int lz[max],int k,int size)
 					  lz[i]=lz[i]-1;
 			  	  	}
 			     }
-			  }
+			     
+		}
+		// test 
+		for(i=0;i<size;i++)
+		 {
+		  if(lzz[i]==lz[i])
+			{
+			 lzzz++;	
+			}
+		 }
+		 if(lzzz=size)
+		   {
+		   	repon3=repon3+1;
+		   }
+		 return repon3;
 }	  	
  
-void mark_zero_col(int mat[][max],int cz[max],int m,int size)
+void mark_zero_col(int mat[][max],int m,int size)
 {
-	int i,j,li;
+	int i,j,li,cz[max];
+	
+	for(j=0;j<size;j++)
+        {	
+        	cz[j]=0;
+         for(i=0;i<size;i++)
+            {
+                if(mat[i][j]==0)
+                {
+                    cz[j]=cz[j]+1;
+                }
+            }	     
+        }
+	
 	if(cz[m]==1)
-			 {
+	  {
 			 	for(i=0;i<size;i++)
 			 	{
 			  	 if (mat[i][m]==0)
@@ -81,8 +174,9 @@ void mark_zero_col(int mat[][max],int cz[max],int m,int size)
 					  	mat[li][j]=-2;
 					  	cz[j]=cz[j]-1;
 					}
-				}	
-			 }
+				}
+					
+	  }
 }	   
    	  	
    	  	
@@ -211,22 +305,11 @@ int mat_size(int r,int c,int mat[][max])
 }  
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  //***********************************************************************************************************************
    
 int main()
     {
-	  int tr,size,aug,aug1,m,av,i,j,k,r,lg[max],ln[max],c,li,co,diff,l=0,lz[max],cz[max]
+	  int tr,size,test1,test2,aug[max],aug1[max],m,repon1,repon2,av,i,j,repon3,k,r,lg[max],ln[max],c,li,co,diff,l=0,lz[max],cz[max]
         ,a[max][max],t[max][max],ad[max][max],minr[max],minc[max],minnew;
         int cross[max][max];
         int nbz[max],nrc[max],ncc[max];
@@ -309,86 +392,96 @@ int main()
         make_mat(cross,a,size);
         make_mat(ad,a,size);
         
-        //calculating row zero i.e. no of zeros in row
-        for(i=0;i<size;i++)
-        {
-         for(j=0;j<size;j++)
-    		{
-     			if(t[i][j]==0)
-      				{
-       				lz[i]=lz[i]+1;             
-      				}			  
-     		}	   
-        }
         
+        
+//##############################################################################################################################        
+       
+	   
+	           
         //striking lines in row
-            
+       repon3=0;
+        while(repon3<2)
+		{    
             k=0;
             while(k<size)
             {
-			mark_zero_line(a,lz,k,size);
+			repon3=mark_zero_line(a,repon3,k,size);
 			 k++;	
 			}	
-			
+		}
         //calculating colomn zero
         
-        for(j=0;j<size;j++)
-        {	
-         for(i=0;i<size;i++)
-            {
-                if(t[i][j]==0)
-                {
-                    cz[j]=cz[j]+1;
-                }
-            }	     
-        }
-        
         //striking lins in colomn
+        
          	m=0;
             while(m<size)
             {
-			 mark_zero_col(a,cz,m,size);
+			 mark_zero_col(a,m,size);
 			 m++;	
-			}	
-        
-        l=0;    
-        
+			}	  
+    
         //calculating no of zero encadre
-       	zero_encadre(a,size);
+       	l=zero_encadre(a,size);
       	
         printf("\n Nombre de zero encadre : %d \n",l);
         
         //cross matrix
         printf(" \n La matrice de marquage est : \n");
         affich_mat(a,size);
-        if (l==size)
-        {
-         for(i=0;i<size;i++)
-            {
-                for(j=0;j<size;j++)
-                {
-                    if(a[i][j]== -1)
-                    {
-                          printf("\n La tache %d est affecte a l'agent %d ",i,j);
-                          printf("\n");
-                          costm=costm+cost[i][j];
-                    }
-                }
-            }
         
+        
+    if (l==size)
+    {
+         costm=tache_affect(a,cost,size);
         printf("\n Le cout minimum d'affectation est : %d ",costm);
-    	}
+    }
+
+
     //********************************************************************************************************
-		
-    if(l!=size)       //if no of line striked is not equal to the size
-       { 
+while(l!=size)
+{	
+	
+	for(i=0;i<size;i++)
+      {
+      	nbz[i]=0;
+      	lg[i]=0;
+      	ln[i]=0;
+      	lz[i]=0;
+      	cz[i]=0;
+      	nbz[i]=0;
+      }
+	//calculating row zero i.e. no of zeros in row
+	
+	//striking lines in row
+	    repon3=0;
+        while(repon3<2)
+		{    
+            k=0;
+            while(k<size)
+            {
+			repon3=mark_zero_line(a,repon3,k,size);
+			 k++;	
+			}	
+		}
+	//calculating colomn zero
+        
+        
+        //striking lins in colomn
+         	m=0;
+            while(m<size)
+            {
+			 mark_zero_col(t,m,size);
+			 m++;	
+			}	  
+    
+	//calcul de nombre de zero encadree
     	 for(i=0;i<size;i++)
             {
               for(j=0;j<size;j++)
                 {
                   if(a[i][j]== -1) 
 					{
-					 nbz[i]=nbz[i]+1;
+					 nbz[i]=nbz[i]+1;  
            		    }                  
     			}
     		printf("\n nbr de -1 en ligne %d est : %d ",i,nbz[i]);	
@@ -397,13 +490,15 @@ int main()
     	for(i=0;i<size;i++)
             {
             	printf("\n la valeur de ligne %d est : %d \n",i,lg[i]);
-			}	
+			}
+				
+		//marquer ligne sans zeero encadre	
     	  for(i=0;i<size;i++)
             {
               if(nbz[i]==0)
 			   {
 			   	lg[i]=-11;
-			   	printf("\n La ligne %d est marquee ",i);
+			   	printf("\n La ligne %d est marquee ",i); //marquer une ligne sans zero encadre
 			   }
 			   		
 			}
@@ -414,46 +509,67 @@ int main()
 			
 //""""""""""""""""""""""""""""""""La prtie repetitive """"""""""""""""""""""""""""""""""""""""""""""""""""			
 
-while(l!=size)
-{
 
+			for(j=0;j<size;j++)
+			   {
+			   	aug[j]=0;
+				}	
+    		for(i=0;i<size;i++)
+			   {
+			   	aug1[i]=0;
+				}
+		test1=0;	
+		test2=0;
 
-
-
-
-
+	while( test1<2 && test2<2 )
+		{
+	   	k=0;
+		m=0;	
 		//Marquer une colonne ayant zero baree sur une ligne marquee			
     	for(j=0;j<size;j++)
             {
-			for(i=0;i<size;i++)
-               {	
-              	 if(a[i][j]==-2 && lg[i]==-11)
-				   {
-				   	ln[j]=-11;
-				   	printf("\n La colomne %d est marquee ",j);
-					}	
-			   }
+			ln[j]=mark_col(a,j,lg,size);
+			aug1[j]=ln[j];
 			}
-		
+			
     	  //Marquer tt ligne ayant zero encadre sur une colonne marquee
     	  for(i=0;i<size;i++)
             {
-             for(j=0;j<size;j++)
-               {	
-              	 if(a[i][j]==-1 && ln[j]==-11)
-				   {
-				   	lg[i]=-11;
-				   	printf("\n La ligne %d est marquee ",i);
-					}	
-			   }
+             lg[i]=mark_line(a,i,ln,lg,size);
+             aug[i]=lg[i];
     		}
-    	
-
-
+    		
+    		for(j=0;j<size;j++)
+        	  {
+		  		if(aug1[j]==ln[j])
+		    	{
+		    	k++;	
+				}
+			  }
+			  printf("\n k %d",k);
+    		for(i=0;i<size;i++)
+        	  {
+		  		if(aug[i]==lg[i])
+		    	{
+		    	m++;	
+				}
+    		  }
+    		  printf("\n m %d",m);
+    		if(k==size)
+    		{
+    		test1++;	
+			}
+			printf("\n test1 %d",test1);
+			if(m==size)
+    		{
+    		test2++;	
+			}
+			printf("\n test2 %d",test2);
+		}
     	//copie de la matrice t sur cross	
     	make_mat(cross,t,size);
     	 
-		//  
+		// barer les colomnes marque
     	for(i=0;i<size;i++)
             {
              for(j=0;j<size;j++)
@@ -464,7 +580,7 @@ while(l!=size)
 					}	
 				}	  
     		}
-    	//	
+    	//	baree les ligne non marquee
     		for(j=0;j<size;j++)
             {
              for(i=0;i<size;i++)
@@ -499,8 +615,10 @@ while(l!=size)
     		
     	printf(" \n La matrice aprés retancher est : \n");
         affich_mat(cross,size);	
+        
     	printf(" \n La matrice reduite : \n");
         affich_mat(a,size);
+        
         printf("************************");
     	for(i=0;i<size;i++)
         {
@@ -514,7 +632,7 @@ while(l!=size)
            printf("\n");
         }		
     		
-    	for(i=0;i<size;i++)
+    	for(i=0;i<size;i++)  // ajouter min au inter ligne colomne baree
             {
 			  for(j=0;j<size;j++)
             	{
@@ -526,7 +644,7 @@ while(l!=size)
     		}
     		
 		printf(" \n La nouvelle matrice reduite est : \n");
-        for(i=0;i<size;i++)
+        for(i=0;i<size;i++) //
         {
             for(j=0;j<size;j++)
             {
@@ -544,8 +662,17 @@ while(l!=size)
 				 } 
             }  
         }	
+        
+                
 		printf(" \n La derniere matrice reduite est : \n");
         affich_mat(cross,size);	
+			
+			make_mat(t,cross,size);
+			make_mat(a,cross,size);
+			make_mat(ad,cross,size); 	
+			
+			
+			
 			
 		for(i=0;i<size;i++)//initialiser conteur 
             {
@@ -553,16 +680,7 @@ while(l!=size)
             }	
 						  	
 		//calculating new row zero 
-        for(i=0;i<size;i++)
-        {
-           for(j=0;j<size;j++)
-    		{
-     		if(cross[i][j]==0)
-      			{
-       			lz[i]=lz[i]+1;             
-      			}						  
-     		}	
-        }
+        
         
         for(i=0;i<size;i++)
         {
@@ -576,7 +694,7 @@ while(l!=size)
             k=0;
             while(k<size)
             {
-			mark_zero_line(cross,lz,k,size);
+			repon3=mark_zero_line(cross,repon3,k,size);
 			 k++;	
 			}	
 			
@@ -608,48 +726,43 @@ while(l!=size)
          	m=0;
             while(m<size)
             {
-			 mark_zero_col(cross,cz,m,size);
+			 mark_zero_col(cross,m,size);
 			 m++;	
 			}	
-        
-        l=0;    
+     
         
         //calculating no of rows and columns crossed
         l=zero_encadre(cross,size);
-        
+		        
         printf("\n Nombre de zero marquee : %d \n",l);
+		
+		
+
+//**************************************************************************************
         
         //cross matrix
         printf(" \n La matrice de marquage est : \n");
         affich_mat(cross,size);
+
         
-        costm=0;
         if (l==size)
         { 	
-         for(i=0;i<size;i++)
-            {
-                for(j=0;j<size;j++)
-                {
-                    if(cross[i][j]== -1)
-                    {
-                          printf("\n La tache %d est affecte a l'agent %d ",i,j);
-                          printf("\n");
-                          costm=costm+cost[i][j];
-                    }
-                }
-            }
-        
+         costm=tache_affect(cross,cost,size);
         printf("\n Le cout minimum d'affectation est : %d ",costm);
-        
     	}			
 			
-    		
-	}
-}
-
-}
-
     	
+	
+
+}
+
+
+
+
+
+}
+
+
     	
     	
     	
